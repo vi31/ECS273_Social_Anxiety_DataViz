@@ -72,4 +72,24 @@
   .card {
     @apply bg-white rounded-xl shadow-soft p-6 transition-shadow duration-200 hover:shadow-hover;
   }
+
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-group label {
+    @apply block text-sm font-medium text-secondary-700;
+  }
+
+  .form-input {
+    @apply block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500;
+  }
+
+  .form-select {
+    @apply block w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500;
+  }
+
+  .form-range {
+    @apply w-full h-2 bg-secondary-200 rounded-lg appearance-none cursor-pointer;
+  }
 }
