@@ -30,6 +30,9 @@
   p {
     @apply mb-4;
   }
+  #cta {
+    scroll-margin-top: 635px; /* Adjust based on your header height */
+  }
 }
 
 @layer components {
