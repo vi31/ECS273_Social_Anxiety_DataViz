@@ -76,6 +76,7 @@ export const AssessmentForm: React.FC = () => {
 
   const [showResults, setShowResults] = useState(false);
   const [coffeeInput, setCoffeeInput] = useState('0');
+  const [prediction, setPrediction] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -87,6 +88,15 @@ export const AssessmentForm: React.FC = () => {
         ...prev,
         Caffeine_Intake_mg_per_day: caffeineMg
       }));
+    } else if ([
+      'Age', 'Sleep_Hours', 'Physical_Activity_hrs_per_week', 'Alcohol_Consumption_drinks_per_week',
+      'Stress_Level_1_10', 'Heart_Rate_bpm', 'Breathing_Rate_breaths_per_min',
+      'Sweating_Level_1_5', 'Therapy_Sessions_per_month', 'Diet_Quality_1_10'
+    ].includes(name)) {
+      setFormData(prev => ({
+        ...prev,
+        [name]: parseFloat(value)
+      }));
     } else {
       setFormData(prev => ({
         ...prev,
@@ -95,10 +105,28 @@ export const AssessmentForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowResults(true);
-    console.log(JSON.stringify(formData, null, 2));
+    console.log("Submitting form data:", formData);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) throw new Error("API call failed");
+
+      const result = await response.json();
+      console.log("Received prediction:", result);
+      setPrediction(result.predicted_anxiety_level);
+    } catch (error) {
+      console.error("Error sending data to backend:", error);
+    }
   };
 
   const nextStep = () => {
@@ -560,9 +588,17 @@ export const AssessmentForm: React.FC = () => {
           className="bg-white p-6 rounded-lg shadow-md"
         >
           <h3 className="text-xl font-bold mb-4">Assessment Results</h3>
-          <pre className="bg-secondary-50 p-4 rounded overflow-x-auto">
+
+          {prediction !== null && (
+            <div className="bg-blue-100 text-blue-900 p-4 rounded-lg mb-4 text-center text-lg font-semibold">
+              Predicted Social Anxiety Score: <span className="text-blue-800">{prediction}</span>
+            </div>
+          )}
+
+          {/* <pre className="bg-secondary-50 p-4 rounded overflow-x-auto">
             {JSON.stringify(formData, null, 2)}
-          </pre>
+          </pre> */}
+
           <motion.button
             type="button"
             onClick={() => {
@@ -576,6 +612,7 @@ export const AssessmentForm: React.FC = () => {
             Take Another Assessment
           </motion.button>
         </motion.div>
+
       )}
     </div>
   );
