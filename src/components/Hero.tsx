@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
   return (
@@ -24,14 +25,17 @@ export const Hero: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.a
-              href="#cta"
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="btn btn-primary text-lg px-8 py-3"
             >
-              Take the Test
-            </motion.a>
+              <Link
+                to="/test"
+                className="btn btn-primary text-lg px-8 py-3"
+              >
+                Take the Test
+              </Link>
+            </motion.div>
             
             <motion.a
               href="#intro"

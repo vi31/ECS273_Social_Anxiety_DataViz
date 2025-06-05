@@ -77,6 +77,31 @@ export const AssessmentForm: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [coffeeInput, setCoffeeInput] = useState('0');
   const [prediction, setPrediction] = useState<number | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateStep = () => {
+    const currentFields = formSteps[currentStep].fields;
+    const newErrors: Record<string, string> = {};
+    let isValid = true;
+
+    currentFields.forEach(field => {
+      if (field === 'coffee_cups') {
+        if (!coffeeInput || parseFloat(coffeeInput) < 0) {
+          newErrors[field] = 'Please enter a valid number of coffee cups';
+          isValid = false;
+        }
+      } else {
+        const value = formData[field as keyof FormData];
+        if (value === '' || value === 0) {
+          newErrors[field] = 'This field is required';
+          isValid = false;
+        }
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -103,34 +128,45 @@ export const AssessmentForm: React.FC = () => {
         [name]: value
       }));
     }
+
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowResults(true);
-    console.log("Submitting form data:", formData);
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) throw new Error("API call failed");
-
-      const result = await response.json();
-      console.log("Received prediction:", result);
-      setPrediction(result.predicted_anxiety_level);
-    } catch (error) {
-      console.error("Error sending data to backend:", error);
+    if (validateStep()) {
+      setShowResults(true);
+      console.log("Submitting form data:", formData);
+  
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        if (!response.ok) throw new Error("API call failed");
+  
+        const result = await response.json();
+        console.log("Received prediction:", result);
+        setPrediction(result.predicted_anxiety_level);
+      } catch (error) {
+        console.error("Error sending data to backend:", error);
+      }
     }
   };
 
   const nextStep = () => {
-    if (currentStep < formSteps.length - 1) {
+    if (validateStep() && currentStep < formSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -142,6 +178,9 @@ export const AssessmentForm: React.FC = () => {
   };
 
   const renderFormField = (fieldName: string) => {
+    const errorMessage = errors[fieldName];
+    const errorClass = errorMessage ? 'border-error-500 focus:border-error-500 focus:ring-error-500' : '';
+
     switch (fieldName) {
       case "Age":
         return (
@@ -155,8 +194,9 @@ export const AssessmentForm: React.FC = () => {
               onChange={handleInputChange}
               min="0"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Gender":
@@ -169,13 +209,14 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Gender}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Occupation":
@@ -188,13 +229,14 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Occupation}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select occupation</option>
               {occupations.map(occupation => (
                 <option key={occupation} value={occupation}>{occupation}</option>
               ))}
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Sleep_Hours":
@@ -211,8 +253,9 @@ export const AssessmentForm: React.FC = () => {
               max="24"
               step="0.5"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "coffee_cups":
@@ -233,8 +276,9 @@ export const AssessmentForm: React.FC = () => {
               min="0"
               step="0.5"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Physical_Activity_hrs_per_week":
@@ -252,8 +296,9 @@ export const AssessmentForm: React.FC = () => {
               min="0"
               step="0.5"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Alcohol_Consumption_drinks_per_week":
@@ -271,8 +316,9 @@ export const AssessmentForm: React.FC = () => {
               min="0"
               step="1"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Smoking":
@@ -285,12 +331,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Smoking}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select option</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Family_History_of_Anxiety":
@@ -305,12 +352,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Family_History_of_Anxiety}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select option</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Stress_Level_1_10":
@@ -328,11 +376,12 @@ export const AssessmentForm: React.FC = () => {
               min="1"
               max="10"
               required
-              className="form-range"
+              className={`form-range ${errorClass}`}
             />
             <div className="text-sm text-secondary-600 mt-1">
               Current value: {formData.Stress_Level_1_10}
             </div>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Heart_Rate_bpm":
@@ -350,11 +399,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Heart_Rate_bpm}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
+              <option value="">Select option</option>
               <option value="80">Normal (≈80 BPM)</option>
               <option value="110">High (≈110 BPM)</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Breathing_Rate_breaths_per_min":
@@ -374,8 +425,9 @@ export const AssessmentForm: React.FC = () => {
               onChange={handleInputChange}
               min="0"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Sweating_Level_1_5":
@@ -393,11 +445,12 @@ export const AssessmentForm: React.FC = () => {
               min="1"
               max="5"
               required
-              className="form-range"
+              className={`form-range ${errorClass}`}
             />
             <div className="text-sm text-secondary-600 mt-1">
               Current value: {formData.Sweating_Level_1_5}
             </div>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Dizziness":
@@ -410,12 +463,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Dizziness}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select option</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Medication":
@@ -428,12 +482,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Medication}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select option</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Therapy_Sessions_per_month":
@@ -450,8 +505,9 @@ export const AssessmentForm: React.FC = () => {
               onChange={handleInputChange}
               min="0"
               required
-              className="form-input"
+              className={`form-input ${errorClass}`}
             />
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Recent_Major_Life_Event":
@@ -466,12 +522,13 @@ export const AssessmentForm: React.FC = () => {
               value={formData.Recent_Major_Life_Event}
               onChange={handleInputChange}
               required
-              className="form-select"
+              className={`form-select ${errorClass}`}
             >
               <option value="">Select option</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </select>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       case "Diet_Quality_1_10":
@@ -489,11 +546,12 @@ export const AssessmentForm: React.FC = () => {
               min="1"
               max="10"
               required
-              className="form-range"
+              className={`form-range ${errorClass}`}
             />
             <div className="text-sm text-secondary-600 mt-1">
               Current value: {formData.Diet_Quality_1_10}
             </div>
+            {errorMessage && <div className="text-error-500 text-sm mt-1">{errorMessage}</div>}
           </div>
         );
       default:
@@ -532,6 +590,7 @@ export const AssessmentForm: React.FC = () => {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
               className="space-y-6"
+              onSubmit={handleSubmit}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {formSteps[currentStep].fields.map(field => renderFormField(field))}
@@ -562,8 +621,8 @@ export const AssessmentForm: React.FC = () => {
                 )}
                 
                 <motion.button
-                  type="button"
-                  onClick={currentStep === formSteps.length - 1 ? handleSubmit : nextStep}
+                  type={currentStep === formSteps.length - 1 ? 'submit' : 'button'}
+                  onClick={currentStep === formSteps.length - 1 ? undefined : nextStep}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="btn btn-primary flex items-center gap-2 ml-auto"

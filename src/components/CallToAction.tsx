@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { LineChart, ArrowRight, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const CallToAction: React.FC = () => {
   const [ref, inView] = useInView({
@@ -46,14 +47,18 @@ export const CallToAction: React.FC = () => {
               ))}
             </ul>
             
-            <motion.button
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="btn bg-white text-primary-700 hover:bg-primary-50 flex items-center gap-2"
             >
-              Start Assessment
-              <ArrowRight size={18} />
-            </motion.button>
+              <Link
+                to="/test"
+                className="btn bg-white text-primary-700 hover:bg-primary-50 flex items-center gap-2"
+              >
+                Start Assessment
+                <ArrowRight size={18} />
+              </Link>
+            </motion.div>
           </motion.div>
           
           <motion.div
