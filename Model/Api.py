@@ -6,14 +6,14 @@ import joblib
 import shap
 import numpy as np
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # client = AsyncIOMotorClient("mongodb://localhost:27017")
 # db = client.anxiety_project
 # Load model
 model = joblib.load("model.pkl")
-DATASET_PATH = "social_anxiety_dataset.csv"
+DATASET_PATH = "social-anxiety-dataset/enhanced_anxiety_dataset.csv"
 if os.path.exists(DATASET_PATH):
     df_dataset = pd.read_csv(DATASET_PATH)
 else:
@@ -21,6 +21,14 @@ else:
 
 # Create FastAPI app
 app = FastAPI(title="Social Anxiety Predictor")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Define input schema using Pydantic
 class UserInput(BaseModel):

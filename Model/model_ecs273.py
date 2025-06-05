@@ -8,7 +8,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import joblib
 
 # Load dataset
-data = pd.read_csv('social_anxiety_survey.csv')
+data = pd.read_csv('social-anxiety-dataset/enhanced_anxiety_dataset.csv')
 
 # Target variable is 'Anxiety Level (1-10)'
 y = data['Anxiety Level (1-10)']

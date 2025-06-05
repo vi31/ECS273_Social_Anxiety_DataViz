@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info, ArrowLeft, ArrowRight } from 'lucide-react';
+import Anxiety3DPlot from './Anxiety3DPlot';
 
 interface FormData {
   Age: number;
@@ -667,10 +668,27 @@ export const AssessmentForm: React.FC = () => {
           <h3 className="text-xl font-bold mb-4">Assessment Results</h3>
 
           {prediction !== null && (
-            <div className="bg-blue-100 text-blue-900 p-4 rounded-lg mb-4 text-center text-lg font-semibold">
-              Predicted Social Anxiety Score: <span className="text-blue-800">{prediction}</span>
-            </div>
+            <>
+              <div className="bg-blue-100 text-blue-900 p-4 rounded-lg mb-4 text-center text-lg font-semibold">
+                Predicted Social Anxiety Score: <span className="text-blue-800">{prediction}</span>
+              </div>
+
+              <div className="mt-8">
+                <h4 className="text-lg font-semibold mb-2">Your Score Compared to Others</h4>
+                <Anxiety3DPlot
+                  prediction={prediction}
+                  csvUrl="src/components/social_anxiety_survey.csv"
+                  userData={{
+                    sleep: formData.Sleep_Hours,
+                    activity: formData.Physical_Activity_hrs_per_week,
+                    stress: formData.Stress_Level_1_10,
+                    anxiety: prediction,
+                  }}
+                />
+              </div>
+            </>
           )}
+
 
           {/* <pre className="bg-secondary-50 p-4 rounded overflow-x-auto">
             {JSON.stringify(formData, null, 2)}
