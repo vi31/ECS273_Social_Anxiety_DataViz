@@ -90,6 +90,24 @@ export const AssessmentForm: React.FC = () => {
           newErrors[field] = 'Please enter a valid number of coffee cups';
           isValid = false;
         }
+      } else if (field === 'Alcohol_Consumption_drinks_per_week') {
+        const value = formData[field];
+        if (value < 0) {
+          newErrors[field] = 'Please enter a valid number (0 or greater)';
+          isValid = false;
+        }
+      } else if (field === 'Physical_Activity_hrs_per_week') {
+        const value = formData[field];
+        if (value < 0) {
+          newErrors[field] = 'Please enter a valid number (0 or greater)';
+          isValid = false;
+        }
+      } else if (field === 'Therapy_Sessions_per_month') {
+        const value = formData[field];
+        if (value < 0) {
+          newErrors[field] = 'Please enter a valid number (0 or greater)';
+          isValid = false;
+        }
       } else {
         const value = formData[field as keyof FormData];
         if (value === '' || value === 0) {
