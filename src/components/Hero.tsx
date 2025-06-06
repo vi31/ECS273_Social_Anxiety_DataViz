@@ -1,3 +1,22 @@
+/**
+ * Hero Component
+ * 
+ * This component renders the hero section of the MindClear website.
+ * 
+ * Features:
+ * - Full viewport height section with a gradient background.
+ * - Animated heading and description introducing the topic of social anxiety.
+ * - Call-to-action buttons:
+ *    - "Take the Test" navigates to the assessment page.
+ *    - "Learn More" scrolls down to the introduction section.
+ * - Animated bouncing arrow at the bottom prompting users to scroll to statistics.
+ * 
+ * Uses:
+ * - Framer Motion for smooth entrance and interaction animations.
+ * - React Router's Link for client-side navigation.
+ * - Lucide icon for the down arrow.
+ */
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';

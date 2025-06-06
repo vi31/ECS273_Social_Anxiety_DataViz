@@ -1,3 +1,19 @@
+/**
+ * Footer Component
+ * 
+ * This component renders the footer section of the MindClear website.
+ * It includes:
+ * - The site branding and short description
+ * - Social media/contact icons (GitHub and email)
+ * - Navigation links grouped under "Explore" and "Resources"
+ *   with external links opening in a new tab
+ * - Privacy statement and link to the privacy policy
+ * - Copyright notice with the current year
+ * 
+ * Styling is applied using utility classes, with responsive grid layout
+ * for organizing footer content across different screen sizes.
+ */
+
 import React from 'react';
 import { Brain, Github, Mail, ExternalLink } from 'lucide-react';
 

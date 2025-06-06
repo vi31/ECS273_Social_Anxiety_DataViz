@@ -1,3 +1,26 @@
+/**
+ * Header Component
+ * 
+ * This component renders the top navigation bar for the MindClear website.
+ * 
+ * Features:
+ * - Displays site branding with logo and title linking to the home page.
+ * - Responsive navigation menu with desktop and mobile views.
+ * - Desktop menu shows navigation links horizontally.
+ * - Mobile menu toggles open/closed with animated dropdown.
+ * - Navigation links include internal page anchors and route links.
+ * - Header background and padding change when the page is scrolled or when not on the home page.
+ * 
+ * State:
+ * - isOpen: controls visibility of the mobile navigation menu.
+ * - scrolled: tracks whether the window has been scrolled beyond a threshold to adjust header style.
+ * 
+ * Uses:
+ * - React Router's Link and useLocation to handle routing and active page detection.
+ * - Framer Motion for smooth animation of mobile menu appearance.
+ * - Lucide icons for menu toggle and branding.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';

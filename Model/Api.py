@@ -9,15 +9,14 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 
 
-# client = AsyncIOMotorClient("mongodb://localhost:27017")
-# db = client.anxiety_project
+
 # Load model
 model = joblib.load("model.pkl")
 DATASET_PATH = "social-anxiety-dataset/enhanced_anxiety_dataset.csv"
 if os.path.exists(DATASET_PATH):
     df_dataset = pd.read_csv(DATASET_PATH)
 else:
-    df_dataset = pd.DataFrame()  # empty fallback
+    df_dataset = pd.DataFrame() 
 
 # Create FastAPI app
 app = FastAPI(title="Social Anxiety Predictor")
@@ -52,6 +51,10 @@ class UserInput(BaseModel):
     Diet_Quality_1_10: int
 
 def preprocess_input(data: UserInput):
+    """
+    Convert UserInput data into a pandas DataFrame formatted to match
+    the feature columns expected by the ML model pipeline.
+    """
     df = pd.DataFrame([{
         "Age": data.Age,
         "Gender": data.Gender,
@@ -76,40 +79,15 @@ def preprocess_input(data: UserInput):
 
 @app.post("/predict")
 def predict_anxiety(input_data: UserInput):
+    """
+    API endpoint to predict the anxiety level given user input data.
+    - Preprocess the input into model-ready format
+    - Use the trained model to predict anxiety level
+    - Return the predicted anxiety score rounded to two decimals
+    """
     try:
         df = preprocess_input(input_data)
         prediction = model.predict(df)[0]
         return {"predicted_anxiety_level": round(float(prediction), 2)}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/explain")
-def explain_prediction(input_data: UserInput):
-    try:
-        df = preprocess_input(input_data)
-
-        # Extract model components
-        regressor = model.named_steps["regressor"]
-        preprocessor = model.named_steps["preprocessor"]
-
-        # Preprocess input
-        X_processed = preprocessor.transform(df)
-
-        # SHAP expects numeric input — use processed features
-        explainer = shap.Explainer(regressor, X_processed)
-        shap_values = explainer(X_processed)
-
-        # Use transformed feature names
-        input_feature_names = preprocessor.get_feature_names_out()
-        values = shap_values.values[0]
-        result = {
-            name: round(val, 3)
-            for name, val in zip(input_feature_names, values)
-        }
-
-        return {
-            "predicted_anxiety_level": round(float(model.predict(df)[0]), 2),
-            "shap_feature_contributions": result
-        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

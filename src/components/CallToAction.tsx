@@ -1,3 +1,20 @@
+/**
+ * Anxiety3DPlot3D React Component
+ * 
+ * This component loads a CSV dataset containing population data on sleep hours,
+ * physical activity, stress level, and anxiety level. It renders a 3D scatter plot
+ * visualizing the relationships between sleep, activity, and stress, with point colors
+ * representing anxiety levels.
+ * 
+ * Props:
+ * - prediction: predicted anxiety level for the current user (number)
+ * - csvUrl: URL to the CSV dataset file (string)
+ * - userData (optional): data point for the current user to highlight on the plot
+ * 
+ * The plot shows population data points and highlights the user's data point in a 
+ * larger marker with a distinct outline.
+ */
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -11,6 +28,7 @@ export const CallToAction: React.FC = () => {
   });
 
   return (
+        // Section element with background gradient and white text, referenced by the inView hook
     <section id="cta" className="section bg-gradient-to-r from-primary-600 to-primary-700 text-white" ref={ref}>
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

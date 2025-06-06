@@ -1,3 +1,18 @@
+/**
+ * ScrollToTop Component
+ * 
+ * Displays a floating "scroll to top" button when the user scrolls down the page.
+ * 
+ * Features:
+ * - Button appears after scrolling down 500 pixels.
+ * - Smoothly scrolls the window back to the top when clicked.
+ * - Uses Framer Motion for fade and scale animations on show/hide.
+ * - Accessible with aria-label for screen readers.
+ * 
+ * Enhances user navigation by providing quick return to the top of long pages.
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';

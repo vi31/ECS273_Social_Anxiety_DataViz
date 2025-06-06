@@ -1,3 +1,24 @@
+/**
+ * IntroSection Component
+ * 
+ * Provides an informative introduction to social anxiety disorder (SAD).
+ * 
+ * Features:
+ * - Uses react-intersection-observer to animate content when scrolled into view.
+ * - Animated cards explaining:
+ *    - What social anxiety is
+ *    - Common symptoms
+ *    - Influential lifestyle factors
+ *    - Treatment approaches
+ * - A summary paragraph with prevalence statistics and encouragement.
+ * - Call-to-action button to assess social anxiety.
+ * 
+ * Utilizes:
+ * - Framer Motion for entrance and staggered animations.
+ * - Lucide-react icons for visual emphasis.
+ */
+
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';

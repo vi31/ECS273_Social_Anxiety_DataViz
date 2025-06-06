@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import { Data } from "plotly.js";
 import * as d3 from "d3";
 
+// Define TypeScript interface for each data point in the dataset
 interface DataPoint {
   sleep: number;
   activity: number;
@@ -10,6 +11,7 @@ interface DataPoint {
   anxiety: number;
 }
 
+// Define the props expected by the Anxiety3DPlot3D component
 interface Anxiety3DPlotProps {
   prediction: number;
   csvUrl: string;
@@ -19,6 +21,7 @@ interface Anxiety3DPlotProps {
 const Anxiety3DPlot3D: React.FC<Anxiety3DPlotProps> = ({ prediction, csvUrl, userData }) => {
   const [data, setData] = useState<DataPoint[]>([]);
 
+  // useEffect hook to load and parse CSV when csvUrl changes
   useEffect(() => {
     const loadCSV = async () => {
       try {
@@ -28,7 +31,7 @@ const Anxiety3DPlot3D: React.FC<Anxiety3DPlotProps> = ({ prediction, csvUrl, use
           for (const key in d) {
             entry[key.trim()] = d[key];
           }
-
+          // Convert string values to numbers and map CSV columns to DataPoint fields
           const dp: DataPoint = {
             sleep: +entry["Sleep Hours"],
             activity: +entry["Physical Activity (hrs/week)"],
@@ -53,9 +56,6 @@ const Anxiety3DPlot3D: React.FC<Anxiety3DPlotProps> = ({ prediction, csvUrl, use
     loadCSV();
   }, [csvUrl]);
 
-  // Combine population and user data
-  const combinedData = userData ? [...data, userData] : data;
-
   // Build the traces for Plotly
   const traces: Data[] = [
     {
@@ -77,6 +77,7 @@ const Anxiety3DPlot3D: React.FC<Anxiety3DPlotProps> = ({ prediction, csvUrl, use
     },
   ];
 
+  // If user data is provided, add a distinct trace for it
   if (userData) {
     traces.push({
       x: [userData.sleep],

@@ -31,7 +31,7 @@
     @apply mb-4;
   }
   #cta {
-    scroll-margin-top: 635px; /* Adjust based on your header height */
+    scroll-margin-top: 635px;
   }
 }
 
