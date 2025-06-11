@@ -31,9 +31,6 @@ Backend Setup
         pip install -r requirements.txt
 
     Ensure the trained model file (model.pkl) is present in the backend directory.
-    If not, run the training script:
-
-        python model_ecs273.py
 
 Frontend Setup
 
